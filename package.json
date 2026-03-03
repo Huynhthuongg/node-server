@@ -1,13 +1,12 @@
 {
-  "name": "node-server",
+  "name": "ai-interface",
   "version": "1.0.0",
+  "description": "AI system interface",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "ws": "^8.18.0",
-    "node-pty": "1.0.0"
+    "express": "^4.19.2"
   }
 }
