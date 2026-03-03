@@ -1,24 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LED Terminal</title>
-<link rel="stylesheet" href="terminal.css">
+
+<style>
+body{
+background:black;
+color:#00ff9c;
+font-family:monospace;
+margin:0;
+padding:10px;
+text-shadow:0 0 10px #00ff9c;
+}
+
+#terminal{
+white-space:pre-wrap;
+}
+
+input{
+width:100%;
+background:black;
+border:none;
+outline:none;
+color:#00ff9c;
+font-family:monospace;
+font-size:16px;
+}
+</style>
 </head>
+
 <body>
 
-<div class="scanline"></div>
+<div id="terminal">LED Terminal Connected\n</div>
+<input id="cmd" autofocus />
 
-<div class="terminal" id="terminal">
-  <div class="output" id="output"></div>
+<script>
+const ws = new WebSocket(`wss://${location.host}`);
+const term = document.getElementById("terminal");
+const input = document.getElementById("cmd");
 
-  <div class="input-line">
-    <span class="prompt">root@server:~$</span>
-    <input id="cmd" autocomplete="off" autofocus />
-  </div>
-</div>
+ws.onmessage = (e)=>{
+term.textContent += e.data;
+window.scrollTo(0,document.body.scrollHeight);
+};
 
-<script src="terminal.js"></script>
+input.addEventListener("keydown",(e)=>{
+if(e.key==="Enter"){
+ws.send(input.value + "\n");
+input.value="";
+}
+});
+</script>
+
 </body>
 </html>
