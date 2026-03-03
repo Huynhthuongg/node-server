@@ -8,37 +8,24 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("public"));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/terminal.html"));
+});
 
 wss.on("connection", (ws) => {
-  const shell = process.env.SHELL || "bash";
+  const shell = "bash";
 
   const ptyProcess = pty.spawn(shell, [], {
-    name: "xterm-color",
     cols: 80,
     rows: 30,
     cwd: process.env.HOME,
     env: process.env
   });
 
-  ptyProcess.onData((data) => {
-    ws.send(data);
-  });
-
-  ws.on("message", (msg) => {
-    ptyProcess.write(msg);
-  });
-
-  ws.on("close", () => {
-    ptyProcess.kill();
-  });
+  ptyProcess.onData(data => ws.send(data));
+  ws.on("message", msg => ptyProcess.write(msg));
 });
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/index.html"));
-});
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log("Terminal server running on port " + PORT);
-});
+server.listen(process.env.PORT || 3000);
