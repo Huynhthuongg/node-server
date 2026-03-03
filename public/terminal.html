@@ -1,57 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>LED Terminal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI System</title>
 
 <style>
 body{
 background:black;
-color:#00ff9c;
+color:#00ffe1;
 font-family:monospace;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
 margin:0;
-padding:10px;
-text-shadow:0 0 10px #00ff9c;
 }
 
-#terminal{
-white-space:pre-wrap;
+.box{
+text-align:center;
+border:1px solid #00ffe1;
+padding:40px;
+box-shadow:0 0 20px #00ffe1;
 }
 
-input{
-width:100%;
-background:black;
-border:none;
-outline:none;
-color:#00ff9c;
-font-family:monospace;
-font-size:16px;
+h1{
+letter-spacing:3px;
+}
+
+.glow{
+animation: glow 2s infinite alternate;
+}
+
+@keyframes glow{
+from{ text-shadow:0 0 5px #00ffe1; }
+to{ text-shadow:0 0 20px #00ffe1; }
 }
 </style>
-</head>
 
+</head>
 <body>
 
-<div id="terminal">LED Terminal Connected\n</div>
-<input id="cmd" autofocus />
-
-<script>
-const ws = new WebSocket(`wss://${location.host}`);
-const term = document.getElementById("terminal");
-const input = document.getElementById("cmd");
-
-ws.onmessage = (e)=>{
-term.textContent += e.data;
-window.scrollTo(0,document.body.scrollHeight);
-};
-
-input.addEventListener("keydown",(e)=>{
-if(e.key==="Enter"){
-ws.send(input.value + "\n");
-input.value="";
-}
-});
-</script>
+<div class="box">
+<h1 class="glow">AI CORE ONLINE</h1>
+<p>System Ready</p>
+</div>
 
 </body>
 </html>
