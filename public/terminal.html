@@ -2,17 +2,70 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Real Terminal</title>
-<link rel="stylesheet" href="terminal.css">
+<title>Terminal</title>
+
+<style>
+body{
+background:black;
+color:#00ff9c;
+font-family:monospace;
+margin:0;
+padding:20px;
+height:100vh;
+}
+
+#output{
+white-space:pre-wrap;
+margin-bottom:10px;
+}
+
+input{
+background:black;
+color:#00ff9c;
+border:none;
+outline:none;
+width:100%;
+font-size:16px;
+font-family:monospace;
+}
+</style>
+
 </head>
 <body>
 
-<div id="terminal"></div>
+<div id="output"></div>
+<input id="cmd" placeholder="type command..." autofocus>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css" />
+<script>
+const input = document.getElementById("cmd");
+const output = document.getElementById("output");
 
-<script src="terminal.js"></script>
+function print(text){
+output.innerHTML += text + "\n";
+window.scrollTo(0,document.body.scrollHeight);
+}
+
+print("AETHON Terminal");
+print("Server connected");
+print("");
+
+input.addEventListener("keydown", async (e)=>{
+if(e.key === "Enter"){
+
+let cmd = input.value;
+
+print("> " + cmd);
+
+let res = await fetch("/run?cmd=" + encodeURIComponent(cmd));
+let text = await res.text();
+
+print(text);
+
+input.value = "";
+
+}
+});
+</script>
+
 </body>
 </html>
