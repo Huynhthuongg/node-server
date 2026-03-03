@@ -1,41 +1,22 @@
 const express = require("express");
-const http = require("http");
-const os = require("os");
-const pty = require("node-pty");
-const { Server } = require("socket.io");
+const { exec } = require("child_process");
 
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
 
 app.use(express.static("public"));
 
-io.on("connection", (socket) => {
+app.get("/api/run", (req, res) => {
+  const cmd = req.query.cmd;
 
-  const shell = os.platform() === "win32" ? "cmd.exe" : "bash";
-
-  const ptyProcess = pty.spawn(shell, [], {
-    name: "xterm-color",
-    cols: 80,
-    rows: 30,
-    cwd: process.cwd(),
-    env: process.env
+  exec(cmd, (err, stdout, stderr) => {
+    if (err) return res.send(err.message);
+    if (stderr) return res.send(stderr);
+    res.send(stdout);
   });
-
-  ptyProcess.onData((data) => {
-    socket.emit("output", data);
-  });
-
-  socket.on("input", (data) => {
-    ptyProcess.write(data);
-  });
-
-  socket.on("disconnect", () => {
-    ptyProcess.kill();
-  });
-
 });
 
-server.listen(3000, () => {
-  console.log("Terminal server running");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
 });
